@@ -102,6 +102,9 @@
                   <p class='column-operation' onclick='fillColumn("${header}")'>Fill Column</p>
                   <p class='column-operation' onclick='emptyColumn("${header}")'>Clear Column</p>
                   <hr />
+                  <p class='column-operation' onclick='sort("${header}")'>Sort</p>
+                  <p class='column-operation' onclick='invsort("${header}")'>Reverse Sort</p>
+                  <hr />
                   <p class='column-operation' onclick='leftColumn("${header}")'>Add Left Column</p>
                   <p class='column-operation' onclick='rightColumn("${header}")'>Add Right Column</p>
                   <p class='column-operation' onclick='deleteColumn("${header}")'>Delete Column</p>
@@ -135,7 +138,7 @@
 
       function number(header) {
         for (var i = 0; i < parsedLines.length; i++) {
-          parsedLines[i][header] = i + 1;
+          parsedLines[i][header] = (i + 1).toString();
         }
         displayCsv(headers, parsedLines);
       }
@@ -197,6 +200,20 @@
           Object.defineProperty(row, columnName, Object.getOwnPropertyDescriptor(row, header));
           delete row[header];
         }
+        displayCsv(headers, parsedLines);
+      }
+
+      function sort(header) {
+        parsedLines.sort(function(a, b) {
+          return a[header].localeCompare(b[header]);
+        });
+        displayCsv(headers, parsedLines);
+      }
+
+      function invsort(header) {
+        parsedLines.sort(function(a, b) {
+          return b[header].localeCompare(a[header]);
+        });
         displayCsv(headers, parsedLines);
       }
     </script>
