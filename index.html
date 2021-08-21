@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      var headers, parsedLines;
+
+      $(function() {
+        $("#csv-upload").submit(function(e) {
+          e.preventDefault();
+          var file = $("#csv-file")[0].files[0];
+          var reader = new FileReader();
+
+          reader.addEventListener("load", function(e) {
+            var csvdata = e.target.result.toString();
+            processCsv(csvdata);
+          });
+          reader.readAsBinaryString(file);
+        });
+
+        $("#download").click(function() {
+          $("#download-area").append(`<a href='${encodeURI(exportCsv())}' download='export.csv' id='download-link'>download</a>`);
+          $(this).hide();
+        });
+
+        $("#download-link").click(function() {
+          $("#download").show();
+          $("#download-link").remove();
+        });
+      });
+
+      $(document).on("change", ".editable", function(e) {
+        parsedLines[$(event.target).data("row")][$(event.target).data("header")] = $(event.target).val();
+      });
+
+      function toggleDropdown(element) {
+        $(element).children(".dropdown-content").toggle();
+      }
+
+      function addRow() {
+        var arr = {};
+        for (var i = 0; i < headers.length; i++) {
+          arr[headers[i]] = "";
+        }
+        parsedLines.push(arr);
+        displayCsv(headers, parsedLines);
+      }
+
+      function deleteRows() {
+        var toRemove = []
+        for (var i = 0; i < parsedLines.length; i++) {
+          var blank = true;
+          for (header of headers) {
+            if (parsedLines[i][header] != "") {
+              blank = false;
+            }
+          }
+          if (blank) {
+            toRemove.push(i)
+          }
+        }
+        toRemove.sort(function(a, b) {
+          return b - a;
+        });
+        for (var index of toRemove) {
+          parsedLines.splice(index, 1);
+        }
+        displayCsv(headers, parsedLines);
+      }
+
+      function processCsv(content) {
+        var lines = content.replace(/\"/g, "").split(/\r\n|\n/);
+        headers = lines[0].split(",");
+        parsedLines = [];
+        for (var i = 1; i < lines.length; i++) {
+          var data = lines[i].split(",");
+          if (data.length == headers.length) {
+            var arr = {};
+            for (var j = 0; j < headers.length; j++) {
+              arr[headers[j]] = data[j] || "";
+            }
+            parsedLines.push(arr);
+          }
+        }
+        displayCsv(headers, parsedLines);
+      }
+
+      function displayCsv() {
+        $("#output").html("<table id='csv-content'><tr id='header-row'></tr></table><button onclick='addRow()'>Add Row</button> <button onclick='deleteRows()'>Delete Blank Rows</button>");
+        for (var header of headers) {
+          $("#header-row").append(
+            `<td>
+              ${header}
+              <div class='dropdown' onclick='toggleDropdown(this)'>
+                :
+                <div class='dropdown-content'>
+                  <p class='column-operation' onclick='renameColumn("${header}")'>Rename Column</p>
+                  <hr />
+                  <p class='column-operation' onclick='number("${header}")'>Number Column</p>
+                  <p class='column-operation' onclick='fillColumn("${header}")'>Fill Column</p>
+                  <p class='column-operation' onclick='emptyColumn("${header}")'>Clear Column</p>
+                  <hr />
+                  <p class='column-operation' onclick='leftColumn("${header}")'>Add Left Column</p>
+                  <p class='column-operation' onclick='rightColumn("${header}")'>Add Right Column</p>
+                  <p class='column-operation' onclick='deleteColumn("${header}")'>Delete Column</p>
+                </div>
+              </div>
+            </td>`
+          );
+        }
+        for (var row of parsedLines) {
+          var formattedRow = "";
+          for (var header of headers) {
+            formattedRow += `<td><input type='text' class='editable' value='${row[header]}' data-row='${parsedLines.indexOf(row)}' data-header='${header}'></td>`;
+          }
+          $("#csv-content").append(`<tr>${formattedRow}</tr>`);
+          exportCsv()
+        }
+      }
+
+      function exportCsv() {
+        var csvString = "data:text/csv;charset=utf-8,";
+        for (var header of headers) {
+          csvString += header + (headers.indexOf(header) == headers.length - 1) ? "\n" : ",";
+        }
+        for (var row of parsedLines) {
+          for (var header of headers) {
+            csvString += row[header] + (headers.indexOf(header) == headers.length - 1) ? "\n" : ",";
+          }
+        }
+        return csvString;
+      }
+
+      function number(header) {
+        for (var i = 0; i < parsedLines.length; i++) {
+          parsedLines[i][header] = i + 1;
+        }
+        displayCsv(headers, parsedLines);
+      }
+
+      function deleteColumn(header) {
+        if (headers.length == 1) {
+          alert("You cannot remove the last column!");
+          return;
+        }
+        for (var i = 0; i < parsedLines.length; i++) {
+          delete parsedLines[i][header];
+        }
+        headers.splice(headers.indexOf(header), 1);
+        displayCsv(headers, parsedLines);
+      }
+
+      function leftColumn(header) {
+        var columnName = `new ${Math.floor(Math.random() * 899) + 100}`;
+        headers.splice(headers.indexOf(header), 0, columnName)
+        for (var i = 0; i < parsedLines.length; i++) {
+          parsedLines[i][columnName] = "";
+        }
+        displayCsv(headers, parsedLines);
+      }
+
+      function rightColumn(header) {
+        var columnName = `new ${Math.floor(Math.random() * 899) + 100}`;
+        headers.splice(headers.indexOf(header) + 1, 0, columnName)
+        for (var i = 0; i < parsedLines.length; i++) {
+          parsedLines[i][columnName] = "";
+        }
+        displayCsv(headers, parsedLines);
+      }
+
+      function fillColumn(header) {
+        var toFill = prompt("What would you like to fill the column with?");
+        for (var i = 0; i < parsedLines.length; i++) {
+          parsedLines[i][header] = toFill;
+        }
+        displayCsv(headers, parsedLines);
+      }
+
+      function emptyColumn(header) {
+        for (var i = 0; i < parsedLines.length; i++) {
+          parsedLines[i][header] = "";
+        }
+        displayCsv(headers, parsedLines);
+      }
+
+      function renameColumn(header) {
+        do {
+          var columnName = prompt("Enter a new column name");
+        } while (headers.indexOf(columnName) != -1);
+        if (!columnName) {
+          return;
+        }
+        headers[headers.indexOf(header)] = columnName;
+        for (var row of parsedLines) {
+          Object.defineProperty(row, columnName, Object.getOwnPropertyDescriptor(row, header));
+          delete row[header];
+        }
+        displayCsv(headers, parsedLines);
+      }
+    </script>
+    <style>
+      #csv-content {
+        border-collapse: collapse;
+      }
+
+      #csv-content td {
+        border: 1px solid black;
+        width: 175px;
+      }
+
+      #csv-content td:not(#header-row td) {
+        padding: 4px 0;
+        text-align: center;
+      }
+
+      #header-row td {
+        padding: 4px 8px;
+        font-weight: bold;
+      }
+
+      .dropdown {
+        font-weight: normal;
+        position: relative;
+        float: right;
+      }
+
+      .dropdown-content {
+        position: absolute;
+        display: none;
+        z-index: 1;
+        background-color: gainsboro;
+        width: 150px;
+        padding: 3px 5px;
+      }
+
+      .dropdown-content p {
+        margin: 2px 0;
+      }
+
+      .column-operation {
+        color: darkblue;
+      }
+
+      .column-operation:hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      .editable {
+        width: 90%;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="csv-upload">
+      <input type="file" id="csv-file">
+      <input type="submit" value="submit">
+    </form>
+    <br />
+    <div id="output"></div>
+    <br />
+    <div id="download-area">
+      <button id="download">process to download</button>
+    </div>
+  </body>
+</html>
