@@ -1,0 +1,66 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    background-color: #DDD;
+}
+
+html {
+    overflow-y: hidden;
+}
+
+body {
+    overflow-y: scroll;
+}
+
+/* Actual page setup */
+
+.siteContainer {
+    min-height: 100vh;
+}
+
+/* Basic styling */
+
+.shadowElement {
+    box-shadow: 5.2px 3px 15px 6px rgba(0,0,0,0.29);
+}
+
+.shadowElementSmall {
+    box-shadow: inset -5.2px 3px 8px 6px rgba(0,0,0,0.25);
+}
+
+.centeredAbs {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.posRel {
+    position: relative;
+}
+
+.textAlignCenter {
+    text-align: center;
+}
+
+/* Text control */
+
+.header {
+    font-family: "Montserrat", sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+}
+
+.subheader {
+    font-family: "Montserrat", sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.default {
+    font-family: "Roboto", sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+}

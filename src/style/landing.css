@@ -1,0 +1,35 @@
+/* This page is specific to the landing page */
+
+.landing .welcome {
+    padding: 30px;
+    border-radius: 50px;
+}
+
+.landing .buttons .button {
+    display: inline-block;
+    text-align: center;
+    border-radius: 9999px;
+    margin: 15px 0;
+    width: 100%;
+}
+
+.landing .buttons .button h2 {
+    padding: 15px 22px;
+    margin: 0;
+}
+
+.landing .buttons {
+    width: fit-content;
+    text-align: center;
+    padding: 15px;
+}
+
+#loadCsv {
+    background-color: #0AD464;
+    color: white;
+}
+
+#noDataContinue {
+    background-color: #DDD;
+    color: black;
+}
