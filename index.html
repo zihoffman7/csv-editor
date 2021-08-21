@@ -119,18 +119,17 @@
             formattedRow += `<td><input type='text' class='editable' value='${row[header]}' data-row='${parsedLines.indexOf(row)}' data-header='${header}'></td>`;
           }
           $("#csv-content").append(`<tr>${formattedRow}</tr>`);
-          exportCsv()
         }
       }
 
       function exportCsv() {
         var csvString = "data:text/csv;charset=utf-8,";
         for (var header of headers) {
-          csvString += header + (headers.indexOf(header) == headers.length - 1) ? "\n" : ",";
+          csvString += (headers.indexOf(header) == headers.length - 1) ? header + "\n" : header + ",";
         }
         for (var row of parsedLines) {
           for (var header of headers) {
-            csvString += row[header] + (headers.indexOf(header) == headers.length - 1) ? "\n" : ",";
+            csvString += (headers.indexOf(header) == headers.length - 1) ? row[header] + "\n" : row[header] + ",";
           }
         }
         return csvString;
@@ -157,7 +156,7 @@
 
       function leftColumn(header) {
         var columnName = `new ${Math.floor(Math.random() * 899) + 100}`;
-        headers.splice(headers.indexOf(header), 0, columnName)
+        headers.splice(headers.indexOf(header), 0, columnName);
         for (var i = 0; i < parsedLines.length; i++) {
           parsedLines[i][columnName] = "";
         }
