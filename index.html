@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-      var headers, parsedLines;
+      var headers, rows;
 
       $(function() {
         $("#csv-upload").submit(function(e) {
@@ -32,7 +32,7 @@
       });
 
       $(document).on("change", ".editable", function(e) {
-        parsedLines[$(event.target).data("row")][$(event.target).data("header")] = $(event.target).val();
+        rows[$(event.target).data("row")][$(event.target).data("header")] = $(event.target).val();
       });
 
       function toggleDropdown(element) {
@@ -44,16 +44,16 @@
         for (var i = 0; i < headers.length; i++) {
           arr[headers[i]] = "";
         }
-        parsedLines.push(arr);
-        displayCsv(headers, parsedLines);
+        rows.push(arr);
+        displayCsv(headers, rows);
       }
 
       function deleteRows() {
         var toRemove = []
-        for (var i = 0; i < parsedLines.length; i++) {
+        for (var i = 0; i < rows.length; i++) {
           var blank = true;
           for (header of headers) {
-            if (parsedLines[i][header] != "") {
+            if (rows[i][header] != "") {
               blank = false;
             }
           }
@@ -65,15 +65,15 @@
           return b - a;
         });
         for (var index of toRemove) {
-          parsedLines.splice(index, 1);
+          rows.splice(index, 1);
         }
-        displayCsv(headers, parsedLines);
+        displayCsv(headers, rows);
       }
 
       function processCsv(content) {
         var lines = content.replace(/\"/g, "").split(/\r\n|\n/);
         headers = lines[0].split(",");
-        parsedLines = [];
+        rows = [];
         for (var i = 1; i < lines.length; i++) {
           var data = lines[i].split(",");
           if (data.length == headers.length) {
@@ -81,10 +81,10 @@
             for (var j = 0; j < headers.length; j++) {
               arr[headers[j]] = data[j] || "";
             }
-            parsedLines.push(arr);
+            rows.push(arr);
           }
         }
-        displayCsv(headers, parsedLines);
+        displayCsv(headers, rows);
       }
 
       function displayCsv() {
@@ -113,10 +113,10 @@
             </td>`
           );
         }
-        for (var row of parsedLines) {
+        for (var row of rows) {
           var formattedRow = "";
           for (var header of headers) {
-            formattedRow += `<td><input type='text' class='editable' value='${row[header]}' data-row='${parsedLines.indexOf(row)}' data-header='${header}'></td>`;
+            formattedRow += `<td><input type='text' class='editable' value='${row[header]}' data-row='${rows.indexOf(row)}' data-header='${header}'></td>`;
           }
           $("#csv-content").append(`<tr>${formattedRow}</tr>`);
         }
@@ -127,7 +127,7 @@
         for (var header of headers) {
           csvString += (headers.indexOf(header) == headers.length - 1) ? header + "\n" : header + ",";
         }
-        for (var row of parsedLines) {
+        for (var row of rows) {
           for (var header of headers) {
             csvString += (headers.indexOf(header) == headers.length - 1) ? row[header] + "\n" : row[header] + ",";
           }
@@ -136,10 +136,10 @@
       }
 
       function number(header) {
-        for (var i = 0; i < parsedLines.length; i++) {
-          parsedLines[i][header] = (i + 1).toString();
+        for (var i = 0; i < rows.length; i++) {
+          rows[i][header] = (i + 1).toString();
         }
-        displayCsv(headers, parsedLines);
+        displayCsv(headers, rows);
       }
 
       function deleteColumn(header) {
@@ -147,44 +147,44 @@
           alert("You cannot remove the last column!");
           return;
         }
-        for (var i = 0; i < parsedLines.length; i++) {
-          delete parsedLines[i][header];
+        for (var i = 0; i < rows.length; i++) {
+          delete rows[i][header];
         }
         headers.splice(headers.indexOf(header), 1);
-        displayCsv(headers, parsedLines);
+        displayCsv(headers, rows);
       }
 
       function leftColumn(header) {
         var columnName = `new ${Math.floor(Math.random() * 899) + 100}`;
         headers.splice(headers.indexOf(header), 0, columnName);
-        for (var i = 0; i < parsedLines.length; i++) {
-          parsedLines[i][columnName] = "";
+        for (var i = 0; i < rows.length; i++) {
+          rows[i][columnName] = "";
         }
-        displayCsv(headers, parsedLines);
+        displayCsv(headers, rows);
       }
 
       function rightColumn(header) {
         var columnName = `new ${Math.floor(Math.random() * 899) + 100}`;
         headers.splice(headers.indexOf(header) + 1, 0, columnName)
-        for (var i = 0; i < parsedLines.length; i++) {
-          parsedLines[i][columnName] = "";
+        for (var i = 0; i < rows.length; i++) {
+          rows[i][columnName] = "";
         }
-        displayCsv(headers, parsedLines);
+        displayCsv(headers, rows);
       }
 
       function fillColumn(header) {
         var toFill = prompt("What would you like to fill the column with?");
-        for (var i = 0; i < parsedLines.length; i++) {
-          parsedLines[i][header] = toFill;
+        for (var i = 0; i < rows.length; i++) {
+          rows[i][header] = toFill;
         }
-        displayCsv(headers, parsedLines);
+        displayCsv(headers, rows);
       }
 
       function emptyColumn(header) {
-        for (var i = 0; i < parsedLines.length; i++) {
-          parsedLines[i][header] = "";
+        for (var i = 0; i < rows.length; i++) {
+          rows[i][header] = "";
         }
-        displayCsv(headers, parsedLines);
+        displayCsv(headers, rows);
       }
 
       function renameColumn(header) {
@@ -195,25 +195,25 @@
           return;
         }
         headers[headers.indexOf(header)] = columnName;
-        for (var row of parsedLines) {
+        for (var row of rows) {
           Object.defineProperty(row, columnName, Object.getOwnPropertyDescriptor(row, header));
           delete row[header];
         }
-        displayCsv(headers, parsedLines);
+        displayCsv(headers, rows);
       }
 
       function sort(header) {
-        parsedLines.sort(function(a, b) {
+        rows.sort(function(a, b) {
           return a[header].localeCompare(b[header]);
         });
-        displayCsv(headers, parsedLines);
+        displayCsv(headers, rows);
       }
 
       function invsort(header) {
-        parsedLines.sort(function(a, b) {
+        rows.sort(function(a, b) {
           return b[header].localeCompare(a[header]);
         });
-        displayCsv(headers, parsedLines);
+        displayCsv(headers, rows);
       }
     </script>
     <style>
