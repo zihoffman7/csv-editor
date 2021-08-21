@@ -1,0 +1,27 @@
+/* This page is specific to the dashboard */
+
+/* Page layout */
+
+#siteContainer {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: 1fr;
+}
+
+#siteContainer > * {
+    overflow-x: hidden;
+}
+
+#main {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 1fr;
+}
+
+/* Tools */
+
+#tools {
+    height: 100%;
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
+}

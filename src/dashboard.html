@@ -14,19 +14,24 @@
 
     <!-- Stylesheets -->
     <link href="style/base.css" rel="stylesheet"></link> 
-    <link href="style/landing.css" rel="stylesheet"></link>
+    <link href="style/dashboard.css" rel="stylesheet"></link>
 
     <!-- Scripts -->
+    <script src="scripts/dashboardController.js"></script>
 
 </head>
 <body>
     
     <div id="siteContainer" class="posRel landing">
-        <div class="centeredAbs welcome dataSelection shadowElementDefault">
-            <h1 class="header textAlignCenter">Start a Session</h1>
-            <div class="buttons subheader">
-                <div class="button shadowElementInset" id="loadCsv"><h2>Load .csv</h2></div>
-                <div class="button shadowElementInset" id="noDataContinue"><h2>Continue with no data</h2></div>
+        <div id="tools" class="shadowElementDefault">
+            <h2 class="textAlignCenter header">Tools</h2>
+        </div>
+        <div id="main">
+            <div id="active">
+                <h2 class="header">Active Assignments: <span class="subheader">3 active assignments...</span></h2>
+            </div>
+            <div id="lab">
+
             </div>
         </div>
     </div>
