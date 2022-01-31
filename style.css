@@ -1,0 +1,50 @@
+#csv-content {
+  border-collapse: collapse;
+}
+
+#csv-content td {
+  border: 1px solid black;
+  width: 175px;
+}
+
+#csv-content td:not(#header-row td) {
+  padding: 4px 0;
+  text-align: center;
+}
+
+#header-row td {
+  padding: 4px 8px;
+  font-weight: bold;
+}
+
+.dropdown {
+  font-weight: normal;
+  position: relative;
+  float: right;
+}
+
+.dropdown-content {
+  position: absolute;
+  display: none;
+  z-index: 1;
+  background-color: gainsboro;
+  width: 150px;
+  padding: 3px 5px;
+}
+
+.dropdown-content p {
+  margin: 2px 0;
+}
+
+.column-operation {
+  color: darkblue;
+}
+
+.column-operation:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.editable {
+  width: 90%;
+}
